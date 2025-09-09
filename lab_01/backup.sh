@@ -1,6 +1,5 @@
 PATH_TO_FILE=$1
-DEST_TO_SAVE=${2:-/c/backup}
-
+DEST_TO_SAVE=${2:-backup}   
 if [ -z "$PATH_TO_FILE" ]; then
     echo "введите директорию для резервного копирования"
     exit 1
@@ -11,19 +10,20 @@ if [ ! -d "$PATH_TO_FILE" ]; then
     exit 1
 fi
 
-if [ ! -d "$DEST_TO_SAVE" ]; then
-    echo "директория для создания копии '$DEST_TO_SAVE' не ссуществует, создаем..."
-    mkdir -p "$DEST_TO_SAVE"
+
+DEST_ON_C="/c/$DEST_TO_SAVE"
+
+if [ ! -d "$DEST_ON_C" ]; then
+    echo "директория '$DEST_ON_C' не существует, создаем..."
+    mkdir -p "$DEST_ON_C"
 fi
 
 DATE=$(date +%m-%d_%H-%M)
 BASENAME=$(basename "$PATH_TO_FILE")
-ARCHIVE_NAME="${DEST_TO_SAVE}/${BASENAME}_${DATE}.tar.gz"
 
-tar -czf "$ARCHIVE_NAME" -C "$(dirname "$PATH_TO_FILE")" "$BASENAME"
+tar -czf "${DEST_ON_C}/${BASENAME}_${DATE}.tar.gz" -C "$(dirname "$PATH_TO_FILE")" "$BASENAME"
 
-echo "резервная копия создана в: $ARCHIVE_NAME"
+echo "резервная копия создана в: "${DEST_ON_C}/${BASENAME}_${DATE}.tar.gz""
 
-echo "содержимое папки: '$DEST_TO_SAVE'" 
-cd "$DEST_TO_SAVE"
-ls
+echo "содержимое папки '$DEST_ON_C':"
+ls "$DEST_ON_C"
