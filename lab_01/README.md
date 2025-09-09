@@ -75,15 +75,21 @@ ls "$DEST_ON_C"
 #### Тестируем
 
 директория с файлом для копии
+
 ![](https://i.imgur.com/fdESA5v.png)
+
 ![](https://i.imgur.com/eOsIsnF.png)
 
 запуск без указания необходимой директории
+
 `./backup.sh /test`
+
 ![](https://i.imgur.com/tEslPDv.png)
 
 запуск c указанием необходимой директории
+
 `./backup.sh /test bimbom`
+
 ![](https://i.imgur.com/wsaXUk3.png)
 
 
