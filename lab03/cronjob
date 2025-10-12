@@ -1,0 +1,2 @@
+0 6 * * * /usr/local/bin/python3 /app/currency_exchange_rate.py --from-currency MDL --to-currency EUR --date $(date +\%Y-\%m-\%d --date "yesterday") --key YOUR_API_KEY >> /var/log/cron.log 2>&1
+0 17 * * 5 /usr/local/bin/python3 /app/currency_exchange_rate.py --from-currency MDL --to-currency USD --date $(date +\%Y-\%m-\%d --date "last friday") --key YOUR_API_KEY >> /var/log/cron.log 2>&1
