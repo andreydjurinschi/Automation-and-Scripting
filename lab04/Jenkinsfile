@@ -1,0 +1,29 @@
+pipeline {
+    agent { label 'php-agent' }
+
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing Composer dependencies...'
+                dir('php-jenkins-demo') {
+                    sh 'composer install --no-interaction --prefer-dist'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo 'Running PHPUnit tests...'
+                dir('php-jenkins-demo') {
+                    sh 'composer test'
+                }
+            }
+        }
+    }
+
+    post {
+        always { echo 'Pipeline finished.' }
+        success { echo 'All stages completed successfully!' }
+        failure { echo 'Pipeline failed!' }
+    }
+}
