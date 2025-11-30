@@ -1,0 +1,11 @@
+FROM php:8.1-cli
+
+# устанавливаем необходимые пакеты
+RUN apt-get update && apt-get install -y \
+    git \
+    openssh-client \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# создаём папку для проекта
+WORKDIR /php-app

@@ -1,0 +1,21 @@
+FROM ubuntu:22.04
+
+# устанавливаем SSH и Apache + PHP
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    apache2 \
+    php \
+    php-cli \
+    php-mbstring \
+    php-xml \
+    unzip \
+    && mkdir /var/run/sshd \
+    && rm -rf /var/lib/apt/lists/*
+
+# создаём ansible пользователя
+RUN useradd -m -s /bin/bash ansible
+RUN mkdir -p /home/ansible/.ssh && chown ansible:ansible /home/ansible/.ssh
+
+EXPOSE 22 80
+
+CMD ["/usr/sbin/sshd", "-D"]

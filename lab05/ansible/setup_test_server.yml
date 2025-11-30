@@ -1,0 +1,24 @@
+---
+- hosts: test-server
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Apache2 and PHP
+      apt:
+        name:
+          - apache2
+          - php
+          - php-mbstring
+          - php-xml
+        state: present
+
+    - name: Copy PHP app to /var/www/html
+      copy:
+        src: /php-app/
+        dest: /var/www/html/
+        owner: www-data
+        group: www-data
+        mode: 0755

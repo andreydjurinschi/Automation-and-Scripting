@@ -1,0 +1,14 @@
+FROM ubuntu:22.04
+
+# устанавливаем Ansible и SSH
+RUN apt-get update && apt-get install -y \
+    software-properties-common \
+    ssh \
+    python3 \
+    python3-pip \
+    git \
+    && apt-add-repository --yes --update ppa:ansible/ansible \
+    && apt-get install -y ansible \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /ansible
