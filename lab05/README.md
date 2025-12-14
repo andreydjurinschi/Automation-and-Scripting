@@ -151,7 +151,30 @@ test-server ansible_host=test-server ansible_user=ansible ansible_ssh_private_ke
 ```
 
 `[test-server]` - имя группы хостов в инвентаре Ansible
+
 `test-server` — алиас/имя хоста.
+
 `ansible_host=test-server` — адрес для подключения.
+
 `ansible_user=ansible` — пользователь SSH, от имени которого происходит подключение.
+
 `ansible_ssh_private_key_file=./id_rsa` — путь к приватному SSH-ключу
+
+### playbook 
+
+```yaml
+- hosts: test-server
+  become: yes
+  tasks:
+    - name: install apache
+      apt: name=apache2 state=present update_cache=yes
+
+    - name: install php
+      apt: name=php state=present
+
+    - name: enable vhost
+      copy:
+        src: vhost.conf
+        dest: /etc/apache2/sites-available/000-default.conf
+```
+
