@@ -178,3 +178,151 @@ test-server ansible_host=test-server ansible_user=ansible ansible_ssh_private_ke
         dest: /etc/apache2/sites-available/000-default.conf
 ```
 
+#### groovy файлы
+
+##### пайплайн для настройки тестового сервера ansible
+
+```groovy
+pipeline {
+    agent { label 'ansible-agent' }
+
+    stages {
+        stage('checkout') {
+            steps {
+                echo 'cloning ansible repository...'
+                checkout scm
+            }
+        }
+
+        stage('setup testest server') {
+            steps {
+                echo 'Configuring test server with Ansible...'
+                dir('lab05/ansible') {
+                    sh 'ansible-playbook -i hosts.ini setup_test_server.yml -v'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'ansible setup pipeline completed.'
+        }
+        success {
+            echo 'test server configured successfully!'
+        }
+        failure {
+            echo 'test server setup failed.'
+        }
+    }
+}
+```
+
+###### пайплайн для тестов
+
+```groovy
+
+pipeline {
+    agent { label 'php-agent' }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Cloning repository...'
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing dependencies...'
+                dir('lab05/php-app') {
+                    sh 'composer install --no-interaction --prefer-dist'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo 'Running PHPUnit tests...'
+                dir('lab05/php-app') {
+                    sh 'php vendor/bin/phpunit --testdox'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'pipeline completed.'
+        }
+        success {
+            echo 'all tests passed successfully!'
+        }
+        failure {
+            echo 'tests failed.'
+        }
+    }
+}
+
+
+```
+
+
+### пример тестов
+
+##### калькулятор класс
+
+```php
+class Calculator
+{
+    public function add(int $a, int $b): int
+    {
+        return $a + $b;
+    }
+
+    public function subtract(int $a, int $b): int
+    {
+        return $a - $b;
+    }
+}
+```
+
+
+##### тест класс
+
+```php
+<?php
+
+use PHPUnit\Framework\TestCase;
+use App\Calculator;
+
+class CalculatorTest extends TestCase
+{
+    public function testAdd()
+    {
+        $calc = new Calculator();
+        $this->assertEquals(5, $calc->add(2, 3));
+    }
+
+    public function testSubtract()
+    {
+        $calc = new Calculator();
+        $this->assertEquals(1, $calc->subtract(3, 2));
+    }
+}
+```
+
+____________________
+
+** что происходило при запуске? ** все тесты, определенные в проекте, были автоматически запущены с помощью PHPUnit.  пайплайн обрабатывает результат выполнения тестов и принимает решение, продолжать ли дальнейшие действия (например, деплой), или остановиться, если тесты не прошли.
+
+____________________
+
+> ответы на вопросы
+
+преимущества ansible: ansible работает без необходимости устанавливать агенты на управляемые машины, что упрощает настройку и снижает затраты на поддержку. playbook'и в ansible написаны на простом языке yaml, что делает их легко читаемыми и удобными для использования. ansible использует ssh для подключения к хостам, что избавляет от необходимости в дополнительном программном обеспечении для связи между машинами. 
+
+______________________________
+
+другие модули ansible: модуль apt используется для управления пакетами на системах, основанных на debian, например, для установки или удаления пакетов. модуль yum предназначен для работы с пакетами на системах. модули copy и template позволяют работать с файлами на удалённых хостах: copy копирует локальные файлы на удалённые машины, а template используется для обработки файлов шаблонов. модуль service помогает управлять системой у, такими как запуск, остановка или перезапуск. модуль user позволяет добавлять, удалять или модифицировать пользователей на удалённых системах.
